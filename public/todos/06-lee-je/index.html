@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <script src="../../shared/storage-scope.js"></script>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>이정은 To-do (임시)</title>
+  <style>
+    :root { --c: #5B4BFF; color-scheme: dark; }
+    * { box-sizing: border-box; }
+    body { margin: 0; min-height: 100vh; display: grid; place-items: center; padding: 6vh 5vw;
+      font-family: 'Segoe UI', 'Malgun Gothic', system-ui, sans-serif; color: #f4f5fb;
+      background: radial-gradient(circle at 50% -20%, color-mix(in oklab, var(--c) 35%, #0b0c12), #0b0c12 60%); }
+    .card { width: min(560px, 100%); }
+    .tag { font-size: 12px; letter-spacing: .25em; text-transform: uppercase; color: var(--c); }
+    h1 { margin: .3em 0 1em; font-size: clamp(28px, 4vw, 44px); }
+    form { display: flex; gap: 8px; margin-bottom: 16px; }
+    input { flex: 1; padding: 12px 14px; border-radius: 12px; border: 1px solid rgba(255,255,255,.15);
+      background: rgba(255,255,255,.05); color: inherit; font: inherit; }
+    button { padding: 12px 16px; border: 0; border-radius: 12px; background: var(--c); color: #0b0c12; font: inherit; font-weight: 600; cursor: pointer; }
+    ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
+    li { display: flex; align-items: center; gap: 12px; padding: 12px 14px; border-radius: 12px; background: rgba(255,255,255,.05); }
+    li.done span { opacity: .45; text-decoration: line-through; }
+    li input { flex: none; accent-color: var(--c); width: 18px; height: 18px; }
+    li span { flex: 1; }
+    li button { padding: 4px 10px; background: transparent; color: rgba(255,255,255,.5); }
+    .note { margin-top: 18px; font-size: 13px; color: rgba(255,255,255,.45); }
+  </style>
+</head>
+<body>
+  <main class="card">
+    <div class="tag">06 · Indigo · 임시 페이지</div>
+    <h1>이정은의 To-do</h1>
+    <form id="f"><input id="t" placeholder="할 일을 입력하세요" autocomplete="off" /><button>추가</button></form>
+    <ul id="list"></ul>
+    <p class="note">실제 작업물로 교체될 자리입니다. 데이터는 이 폴더 전용 키에 저장됩니다.</p>
+  </main>
+  <script>
+    var KEY = 'todos';
+    var SAMPLE = [
+      { text: '발표 자료 확인하기', done: true },
+      { text: 'To-do 기능 다듬기', done: false },
+      { text: '팀 랜딩에서 테스트하기', done: false }
+    ];
+    var items = JSON.parse(localStorage.getItem(KEY) || 'null');
+    if (!Array.isArray(items) || items.length === 0) { items = SAMPLE; save(); }
+    function save() { localStorage.setItem(KEY, JSON.stringify(items)); }
+    function render() {
+      var ul = document.getElementById('list');
+      ul.innerHTML = '';
+      items.forEach(function (it, i) {
+        var li = document.createElement('li');
+        if (it.done) li.className = 'done';
+        var cb = document.createElement('input');
+        cb.type = 'checkbox'; cb.checked = it.done;
+        cb.onchange = function () { it.done = cb.checked; save(); render(); };
+        var sp = document.createElement('span'); sp.textContent = it.text;
+        var del = document.createElement('button'); del.type = 'button'; del.textContent = '삭제';
+        del.onclick = function () { items.splice(i, 1); save(); render(); };
+        li.append(cb, sp, del); ul.append(li);
+      });
+    }
+    document.getElementById('f').onsubmit = function (e) {
+      e.preventDefault();
+      var t = document.getElementById('t');
+      if (!t.value.trim()) return;
+      items.push({ text: t.value.trim(), done: false }); t.value = ''; save(); render();
+    };
+    render();
+  </script>
+</body>
+</html>

@@ -1,0 +1,418 @@
+:root {
+  color-scheme: dark;
+  --bg: #05060a;
+  --fg: #f4f5fb;
+  --muted: rgba(244, 245, 251, 0.55);
+  --ease-out: cubic-bezier(0.2, 0.7, 0.1, 1);
+  --ease-io: cubic-bezier(0.7, 0, 0.15, 1);
+  font-family: 'Pretendard Variable', Pretendard, 'Segoe UI Variable Text', 'Segoe UI', 'Malgun Gothic', system-ui, sans-serif;
+}
+
+* { box-sizing: border-box; }
+html, body { margin: 0; height: 100%; background: var(--bg); color: var(--fg); overflow: hidden; }
+
+kbd {
+  display: inline-block;
+  min-width: 1.8em;
+  padding: 0.1em 0.45em;
+  margin: 0 0.15em;
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  border-radius: 6px;
+  font: inherit;
+  font-size: 0.9em;
+  text-align: center;
+  background: rgba(255, 255, 255, 0.06);
+}
+
+/* ---------- background ---------- */
+#fluid { position: fixed; inset: 0; width: 100vw; height: 100vh; display: block; }
+
+.fallback-bg {
+  position: fixed;
+  inset: -25%;
+  display: none;
+  background: conic-gradient(from 0deg, #ff3b4e, #ff8a2b, #ffd93b, #3be07a, #3b8bff, #5b4bff, #b04bff, #ff3b4e);
+  filter: blur(140px) saturate(1.2);
+  opacity: 0.25;
+  animation: spin 40s linear infinite;
+}
+.no-webgl .fallback-bg { display: block; }
+.no-webgl #fluid { display: none; }
+@keyframes spin { to { transform: rotate(1turn); } }
+
+/* ---------- stage ---------- */
+.stage { position: fixed; inset: 0; pointer-events: none; }
+
+.title {
+  position: absolute;
+  left: 50%;
+  top: 44%;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  transform: translate(-50%, -50%);
+  font-family: 'Segoe UI Variable Display', 'Segoe UI', 'SF Pro Display', Inter, system-ui, sans-serif;
+  font-weight: 700;
+  /* 기준 크기: 가로·세로 중 작은 쪽에 맞춰 두 줄이 화면에 들어가게 한다 */
+  font-size: clamp(72px, min(15vw, 30vh), 300px);
+  line-height: 0.9;
+  white-space: nowrap;
+  transition: transform 1.4s var(--ease-io);
+}
+.title .line { display: block; }
+.title .brand { letter-spacing: -0.035em; }
+.title .team {
+  margin-top: 0.12em;
+  font-size: 0.46em;
+  font-weight: 600;
+  letter-spacing: -0.045em;
+}
+.title .w {
+  display: inline-block;
+  opacity: 0;
+  filter: blur(28px);
+  transform: translateY(0.12em);
+  animation: rise 1.8s var(--ease-out) var(--d, 0.3s) forwards;
+  text-shadow: 0 0 60px rgba(255, 255, 255, 0.12);
+}
+.title .three {
+  padding-right: 0.04em;
+  background: linear-gradient(100deg, #ff3b4e, #ff8a2b, #ffd93b, #3be07a, #3b8bff, #5b4bff, #b04bff, #ff3b4e);
+  background-size: 300% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  text-shadow: none;
+  animation: rise 1.8s var(--ease-out) var(--d, 0.7s) forwards, flow 10s linear infinite;
+}
+@keyframes rise { to { opacity: 1; filter: blur(0); transform: none; } }
+@keyframes flow { to { background-position: 300% 0; } }
+
+/* 제목 셋째 줄: 무엇을 보여주는 페이지인지 */
+.title .sub {
+  display: flex;
+  align-items: center;
+  gap: 0.9em;
+  margin-top: 0.95em;
+  font-size: 0.14em;
+  font-weight: 500;
+  line-height: 1;
+  letter-spacing: 0.42em;
+  text-transform: uppercase;
+}
+.title .sub .w {
+  margin-right: -0.42em;
+  color: rgba(244, 245, 251, 0.72);
+  text-shadow: none;
+}
+/* 양옆의 가는 선 */
+.title .sub::before,
+.title .sub::after {
+  content: '';
+  width: 2.6em;
+  height: 1px;
+  opacity: 0;
+  animation: fade-in 1.4s ease 1.7s forwards;
+}
+.title .sub::before { background: linear-gradient(90deg, transparent, rgba(244, 245, 251, 0.45)); }
+.title .sub::after { background: linear-gradient(270deg, transparent, rgba(244, 245, 251, 0.45)); }
+@keyframes fade-in { to { opacity: 1; } }
+
+/* 하단 가운데: 사용 기술 */
+.stack {
+  position: absolute;
+  left: 50%;
+  bottom: 4.5vh;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 0.9em;
+  transform: translateX(-50%);
+  font-size: clamp(12px, 0.95vw, 16px);
+  font-weight: 500;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: rgba(244, 245, 251, 0.5);
+  white-space: nowrap;
+  opacity: 0;
+  animation: fade-in 1.4s ease 2.2s forwards;
+}
+.stack span { margin-right: -0.24em; }
+.stack i { font-style: normal; opacity: 0.6; }
+
+.revealed .title { transform: translate(-50%, -50%) translateY(-19vh) scale(0.5); }
+/* 제목이 절반으로 줄어도 TO-DO LIST가 읽히도록 이 줄만 크게 보정한다 */
+.title .sub { transition: font-size 1.4s var(--ease-io), margin-top 1.4s var(--ease-io); }
+.revealed .title .sub { font-size: 0.19em; margin-top: 0.75em; }
+
+/* ---------- orbs ---------- */
+.orbs { position: absolute; inset: 0; }
+
+.orb {
+  --size: clamp(34px, 3.3vw, 60px);
+  position: absolute;
+  left: calc(var(--x) * 1%);
+  top: calc(var(--y) * 1%);
+  width: var(--size);
+  height: var(--size);
+  margin: calc(var(--size) / -2) 0 0 calc(var(--size) / -2);
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: none;
+  cursor: pointer;
+  outline: none;
+  pointer-events: none;
+  opacity: 0;
+  transform: scale(0.2);
+  transition: opacity 0.8s ease, transform 0.7s cubic-bezier(0.3, 1.5, 0.5, 1);
+}
+.orb::before { content: ''; position: absolute; inset: -45%; border-radius: 50%; }
+.orb.in { pointer-events: auto; opacity: 0.5; transform: scale(1); }
+.has-active .orb.in { opacity: 0.3; }
+.has-active .orb.in.active { opacity: 1; transform: scale(1.45); }
+
+/* 항성 — 작은 백열 핵, 사람 색의 코로나, 반짝이는 회절 스파이크 */
+.orb-core,
+.orb-flare {
+  position: absolute;
+  border-radius: 50%;
+  pointer-events: none;
+  mix-blend-mode: screen;
+  animation: bob 7s ease-in-out infinite;
+  animation-delay: calc(var(--i) * -1s);
+}
+.orb-core {
+  inset: -70%;
+  background: radial-gradient(circle,
+    #fff 0 3%,
+    color-mix(in oklab, var(--c) 30%, #fff) 5.5%,
+    color-mix(in oklab, var(--c) 80%, transparent) 10%,
+    color-mix(in oklab, var(--c) 28%, transparent) 20%,
+    color-mix(in oklab, var(--c) 9%, transparent) 36%,
+    transparent 58%);
+}
+.orb-flare { inset: -25%; }
+.orb.active .orb-core {
+  inset: -95%;
+  animation: bob 7s ease-in-out infinite, breathe 3.2s ease-in-out infinite;
+  animation-delay: calc(var(--i) * -1s), 0s;
+}
+.orb.active .orb-flare {
+  animation: bob 7s ease-in-out infinite, spin-slow 24s linear infinite;
+  animation-delay: calc(var(--i) * -1s), 0s;
+}
+@keyframes bob { 0%, 100% { translate: 0 0; } 50% { translate: 0 -6px; } }
+@keyframes breathe { 0%, 100% { scale: 1; } 50% { scale: 1.12; } }
+@keyframes spin-slow { to { rotate: 1turn; } }
+
+/* 회절 스파이크: 코어에 십자, 플레어에 X자 */
+.orb-core::before,
+.orb-core::after,
+.orb-flare::before,
+.orb-flare::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 100%;
+  height: 1.5px;
+  border-radius: 2px;
+  background: linear-gradient(90deg,
+    transparent,
+    color-mix(in oklab, var(--c) 45%, transparent) 25%,
+    color-mix(in oklab, var(--c) 50%, #fff) 44%,
+    #fff 50%,
+    color-mix(in oklab, var(--c) 50%, #fff) 56%,
+    color-mix(in oklab, var(--c) 45%, transparent) 75%,
+    transparent);
+  transform: translate(-50%, -50%) rotate(var(--r)) scaleX(1);
+  animation: twinkle var(--t, 3.4s) ease-in-out infinite;
+  animation-delay: calc(var(--i) * -0.73s);
+}
+.orb-core::before { --r: 0deg; }
+.orb-core::after { --r: 90deg; --t: 4.1s; }
+.orb-flare::before { --r: 45deg; --t: 2.9s; height: 1px; opacity: 0.55; }
+.orb-flare::after { --r: -45deg; --t: 3.7s; height: 1px; opacity: 0.55; }
+.orb.active .orb-core::before,
+.orb.active .orb-core::after { height: 2px; --t: 2.2s; }
+.orb.active .orb-flare::before,
+.orb.active .orb-flare::after { opacity: 0.8; }
+@keyframes twinkle {
+  0%, 100% { transform: translate(-50%, -50%) rotate(var(--r)) scaleX(1); }
+  50% { transform: translate(-50%, -50%) rotate(var(--r)) scaleX(0.62); }
+}
+
+/* 배경의 작은 별들. 시선을 뺏지 않도록 어둡고 거의 정지해 있다 */
+.starfield { position: fixed; inset: 0; pointer-events: none; mix-blend-mode: screen; }
+.starfield i {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 1px;
+  height: 1px;
+  border-radius: 50%;
+}
+.starfield i:nth-child(2) { width: 1.5px; height: 1.5px; animation: stars-twinkle 5s ease-in-out infinite; }
+.starfield i:nth-child(3) { width: 2px; height: 2px; animation: stars-twinkle 7s ease-in-out -2s infinite; }
+@keyframes stars-twinkle { 0%, 100% { opacity: 1; } 50% { opacity: 0.35; } }
+
+/* ---------- 우주 연출 ---------- */
+/* 별 층마다 다른 깊이로 마우스를 따라 움직인다 */
+.starfield i { transition: translate 1.2s var(--ease-out); }
+.starfield i:nth-child(1) { translate: calc(var(--px, 0) * -4px) calc(var(--py, 0) * -4px); }
+.starfield i:nth-child(2) { translate: calc(var(--px, 0) * -10px) calc(var(--py, 0) * -10px); }
+.starfield i:nth-child(3) { translate: calc(var(--px, 0) * -20px) calc(var(--py, 0) * -20px); }
+
+/* 인트로 첫 장면: 별이 먼저 떠오르고 성운이 뒤따른다 */
+.starfield { animation: stars-in 2.4s ease-out both; }
+@keyframes stars-in { from { opacity: 0; } to { opacity: 1; } }
+
+/* 유성: 인트로에서 한 번만 */
+.meteor {
+  position: absolute;
+  left: 72%;
+  top: 12%;
+  width: 180px;
+  height: 1.5px;
+  border-radius: 2px;
+  background: linear-gradient(90deg, rgba(255, 255, 255, 0), rgba(210, 225, 255, 0.55) 70%, #fff);
+  transform: rotate(160deg);
+  transform-origin: right center;
+  opacity: 0;
+  animation: meteor 1.3s cubic-bezier(0.3, 0, 0.6, 1) forwards;
+}
+.meteor::after {
+  content: '';
+  position: absolute;
+  right: -2px;
+  top: 50%;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: 0 0 10px 2px rgba(200, 220, 255, 0.8);
+  translate: 0 -50%;
+}
+@keyframes meteor {
+  0% { opacity: 0; translate: 0 0; }
+  15% { opacity: 1; }
+  100% { opacity: 0; translate: -34vw 12vh; }
+}
+
+/* 제목: 별빛처럼 은은한 번짐 */
+.title .brand .w {
+  text-shadow: 0 0 40px rgba(180, 200, 255, 0.28), 0 0 120px rgba(140, 120, 255, 0.18);
+}
+.title .team .w:not(.three) { color: rgba(244, 245, 251, 0.82); }
+
+.label {
+  position: absolute;
+  left: calc(var(--x) * 1%);
+  top: calc(var(--y) * 1% + 9vh);
+  transform: translate(-50%, 0);
+  text-align: center;
+  white-space: nowrap;
+  opacity: 0;
+  transition: opacity 0.4s ease, left 0.55s var(--ease-io), top 0.55s var(--ease-io);
+}
+.label.show { opacity: 1; }
+.label-no {
+  display: block;
+  margin-bottom: 6px;
+  font-size: clamp(14px, 1.15vw, 20px);
+  font-weight: 600;
+  letter-spacing: 0.2em;
+  /* 마지막 글자 뒤 자간만큼 오른쪽이 비는 것을 보정해 정확히 가운데에 둔다 */
+  margin-right: -0.2em;
+  color: var(--c);
+  text-shadow: 0 0 12px color-mix(in oklab, var(--c) 60%, transparent);
+  font-variant-numeric: tabular-nums;
+}
+.label-name { font-size: clamp(22px, 2.1vw, 38px); font-weight: 600; letter-spacing: -0.01em; }
+
+/* ---------- open transition ---------- */
+.curtain {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(circle at var(--cx) var(--cy), color-mix(in oklab, var(--c) 55%, #05060a) 0, color-mix(in oklab, var(--c) 18%, #05060a) 45%, #06070c 100%);
+  clip-path: circle(0 at var(--cx, 50%) var(--cy, 50%));
+  transition: clip-path 0.85s var(--ease-io);
+}
+.curtain.open { clip-path: circle(150vmax at var(--cx, 50%) var(--cy, 50%)); }
+
+.viewer {
+  position: fixed;
+  inset: 0;
+  display: grid;
+  grid-template-rows: auto 1fr;
+  gap: 14px;
+  padding: 3vh 3vw;
+  outline: none;
+  opacity: 0;
+  transform: scale(0.97) translateY(10px);
+  transition: opacity 0.45s ease, transform 0.6s var(--ease-out);
+}
+.viewer[hidden] { display: none; }
+.viewer.show { opacity: 1; transform: none; }
+.viewer-head { display: flex; align-items: center; gap: 14px; }
+.viewer-dot { width: 14px; height: 14px; border-radius: 50%; background: var(--c); box-shadow: 0 0 18px var(--c); }
+.viewer-no { font-size: 13px; letter-spacing: 0.25em; text-transform: uppercase; color: var(--muted); }
+.viewer-name { margin: 0; font-size: clamp(20px, 1.8vw, 30px); font-weight: 600; }
+.viewer-actions { margin-left: auto; display: flex; gap: 8px; }
+.btn {
+  appearance: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 16px;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.06);
+  color: var(--fg);
+  font: inherit;
+  font-size: 14px;
+  text-decoration: none;
+  cursor: pointer;
+  backdrop-filter: blur(8px);
+  transition: background 0.2s ease;
+}
+.btn:hover, .btn:focus-visible { background: rgba(255, 255, 255, 0.14); outline: none; }
+.btn kbd { font-size: 12px; margin: 0; }
+.viewer-frame {
+  width: 100%;
+  height: 100%;
+  border: 0;
+  border-radius: 18px;
+  background: #0b0c12;
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.08), 0 40px 120px -40px var(--c);
+}
+
+.fps {
+  position: fixed;
+  left: 12px;
+  bottom: 10px;
+  font: 12px ui-monospace, Consolas, monospace;
+  color: #9fe;
+  opacity: 0.75;
+}
+
+/* ?reduced: 움직임을 최소화하고 완성된 화면을 바로 보여준다(OS 설정과 무관) */
+html.reduced .orb-core,
+html.reduced .orb-flare,
+html.reduced .orb-core::before,
+html.reduced .orb-core::after,
+html.reduced .orb-flare::before,
+html.reduced .orb-flare::after,
+html.reduced .starfield i,
+html.reduced .starfield,
+html.reduced .meteor,
+html.reduced .fallback-bg { animation: none; }
+html.reduced .stack,
+html.reduced .title .sub::before,
+html.reduced .title .sub::after { animation: none; opacity: 1; }
+html.reduced .title .w,
+html.reduced .title .three { animation: none; opacity: 1; filter: none; transform: none; }

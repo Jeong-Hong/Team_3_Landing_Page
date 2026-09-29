@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="ko" class="preload">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="Team 3 — 7명의 To-do" />
+    <title>KANT AX · Team 3</title>
+    <!-- 스타일이 적용되기 전 첫 화면에서 요소가 미끄러져 들어오지 않도록, 준비가 끝날 때까지 전환을 끄고 가린다 -->
+    <style>
+      html.preload { background: #05060a; }
+      html.preload *, html.preload *::before, html.preload *::after { transition: none !important; }
+      html.preload body { visibility: hidden; }
+    </style>
+  </head>
+  <body>
+    <canvas id="fluid" aria-hidden="true"></canvas>
+    <div class="fallback-bg" aria-hidden="true"></div>
+
+    <main class="stage" id="stage">
+      <h1 class="title" aria-label="KANT AX Team 3 To-do List">
+        <span class="line brand"><span class="w" style="--d: 0.3s">KANT</span> <span class="w" style="--d: 0.5s">AX</span></span>
+        <span class="line team"><span class="w" style="--d: 0.85s">Team</span> <span class="w three" style="--d: 1.05s">3</span></span>
+        <span class="line sub"><span class="w" style="--d: 1.45s">To-do List</span></span>
+      </h1>
+      <nav class="orbs" id="orbs" aria-label="팀원 To-do"></nav>
+      <div class="label" id="label" aria-live="polite">
+        <span class="label-no"></span>
+        <span class="label-name"></span>
+      </div>
+      <p class="stack"><span>HTML</span><i>·</i><span>CSS</span><i>·</i><span>JavaScript</span></p>
+    </main>
+
+    <div class="curtain" id="curtain" aria-hidden="true"></div>
+
+    <section class="viewer" id="viewer" role="dialog" aria-modal="true" aria-labelledby="viewer-name" tabindex="-1" hidden>
+      <header class="viewer-head">
+        <span class="viewer-dot"></span>
+        <span class="viewer-no" id="viewer-no"></span>
+        <h2 class="viewer-name" id="viewer-name"></h2>
+        <div class="viewer-actions">
+          <a class="btn" id="viewer-newtab" target="_blank" rel="noopener">새 탭</a>
+          <button class="btn" id="viewer-close" type="button">닫기 <kbd>Esc</kbd></button>
+        </div>
+      </header>
+      <iframe class="viewer-frame" id="viewer-frame" title=""></iframe>
+    </section>
+
+    <div class="fps" id="fps" hidden></div>
+    <script type="module" src="/src/main.js"></script>
+  </body>
+</html>

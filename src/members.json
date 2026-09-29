@@ -1,0 +1,9 @@
+[
+  { "id": "01-gang", "name": "강성수", "colorName": "Red", "color": "#FF3B4E", "path": "todos/01-gang/index.html" },
+  { "id": "02-seo", "name": "서종찬", "colorName": "Orange", "color": "#FF8A2B", "path": "todos/02-seo/index.html" },
+  { "id": "03-oh", "name": "오명석", "colorName": "Yellow", "color": "#FFD93B", "path": "todos/03-oh/index.html" },
+  { "id": "04-yu", "name": "유상진", "colorName": "Green", "color": "#3BE07A", "path": "todos/04-yu/index.html" },
+  { "id": "05-lee-mj", "name": "이명지", "colorName": "Blue", "color": "#3B8BFF", "path": "todos/05-lee-mj/index.html" },
+  { "id": "06-lee-je", "name": "이정은", "colorName": "Indigo", "color": "#5B4BFF", "path": "todos/06-lee-je/index.html" },
+  { "id": "07-hong", "name": "홍정기", "colorName": "Violet", "color": "#B04BFF", "path": "todos/07-hong/index.html" }
+]
