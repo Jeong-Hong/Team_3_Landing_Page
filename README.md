@@ -6,9 +6,9 @@
 
 ```bash
 npm install
-npm run dev      # http://localhost:5173/todo_list_3th/
+npm run dev      # http://localhost:5173/Team_3_Landing_Page/
 npm run build    # dist/ 생성
-npm run preview  # 빌드 결과 확인 http://localhost:4173/todo_list_3th/
+npm run preview  # 빌드 결과 확인 http://localhost:4173/Team_3_Landing_Page/
 ```
 
 URL 옵션
@@ -68,4 +68,10 @@ public/shared/storage-scope.js
 public/todos/<폴더>/     각자 To-do (현재는 임시 페이지)
 ```
 
-`vite.config.js`의 `base`는 `/todo_list_3th/`입니다 (GitHub Pages 하위 경로).
+`vite.config.js`의 `base`는 `/Team_3_Landing_Page/`입니다 (GitHub Pages 하위 경로). 저장소 이름이 바뀌면 이 값도 `/<저장소 이름>/`으로 바꿉니다.
+
+## 배포 (GitHub Pages)
+
+공개 주소: https://jeong-hong.github.io/Team_3_Landing_Page/
+
+`main`에 push하면 `.github/workflows/deploy.yml`이 `npm ci`와 `npm run build`를 실행하고 `dist/`를 Pages에 올립니다. 처음 한 번은 저장소 **Settings → Pages → Build and deployment → Source**를 **GitHub Actions**로 설정해야 합니다.
